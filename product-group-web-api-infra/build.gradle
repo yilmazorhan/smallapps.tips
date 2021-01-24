@@ -7,8 +7,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.1'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'org.openapi.generator' version '5.0.0'
-	id 'com.google.cloud.tools.jib' version '2.7.1'
-	//id 'nebula.release' version '15.2.0'
+	id 'com.google.cloud.tools.jib' version '2.7.1'	
 }
 
 dependencies {
