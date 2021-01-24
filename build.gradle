@@ -1,0 +1,110 @@
+apply plugin: 'java'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    apply plugin: 'project-report'
+    apply plugin: "checkstyle"
+
+    group 'com.minicrm'
+    version '1.0-SNAPSHOT'
+    sourceCompatibility = JavaVersion.VERSION_15
+    
+    buildscript {
+	  repositories {
+	    maven {
+	      url "https://plugins.gradle.org/m2/"
+	    }
+	  }
+	  dependencies {
+	    classpath "org.openapitools:openapi-generator-gradle-plugin:5.0.0"
+	  }
+	}
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/releases/"
+        }
+        maven {
+	      url "https://plugins.gradle.org/m2/"
+	    }
+    }
+
+    dependencies {
+        implementation 'org.projectlombok:lombok:1.18.16'
+        annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+        testImplementation 'org.projectlombok:lombok:1.18.16'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+        testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+        testImplementation 'com.tngtech.archunit:archunit-junit5:0.15.0'
+		testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+    } 
+    
+    jacoco {
+    	toolVersion = "0.8.6"
+    }   
+
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.enabled true
+        }
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                classDirectories.setFrom(files(classDirectories.files.collect {
+                    fileTree(dir: it, exclude: '**/generated/**')
+                }))
+                limit {
+                    minimum = 0.8
+                }
+            }
+        }
+    }
+    
+    def codeQualityDir = project(':code-quality')
+    checkstyle {
+	  configFile = codeQualityDir.file("src/main/code-quality/checkstyle.xml")
+	  configProperties = [ 'checkstyleSuppressionFile':codeQualityDir.file("src/main/code-quality/checkstyle.suppression.xml").absolutePath]
+	  ignoreFailures = false
+	  maxWarnings = 0
+	  maxErrors = 0
+	  toolVersion '8.36.1'
+	  
+	}
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "standard_error","standard_out","passed", "skipped", "failed"
+        }
+
+        jacoco{
+            includes = ['tr.com.minicrm.*','tips.smallapps.*']
+        }
+
+        finalizedBy jacocoTestReport, jacocoTestCoverageVerification
+    }
+
+    jar{
+        manifest {
+            attributes 'Implementation-Title': project.name,
+                    'Implementation-Version': project.version
+        }
+    }
+}
+sourceSets {
+    main {
+        java {
+            srcDir "buildSrc/src/main/groovy"
+        }
+    }
+}

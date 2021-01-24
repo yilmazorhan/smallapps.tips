@@ -1,0 +1,17 @@
+<databaseChangeLog  
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"  
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">  
+   	<changeSet  id="2020-01-02_10-30-45_1"  author="Hulya Yıldız">  
+        <createTable schemaName="public" tableName="product_group_table">  
+            <column  name="pgr_id" type="BIGINT" autoIncrement="true">  
+                <constraints  primaryKey="true"  nullable="false"/>  
+            </column>  
+            <column  name="group_name"  type="varchar(150)" >  
+                <constraints  nullable="false" unique="true"/>  
+            </column> 
+            <column name="version" type="INT" defaultValue="0"></column>
+        </createTable>  
+    </changeSet>
+</databaseChangeLog>

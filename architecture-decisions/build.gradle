@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'com.minicrm'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+sourceCompatibility = JavaVersion.VERSION_14
+
+dependencies {
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+}
+sourceSets {
+    main {
+        java {
+            srcDir "src/main/adr"
+        }
+    }
+}

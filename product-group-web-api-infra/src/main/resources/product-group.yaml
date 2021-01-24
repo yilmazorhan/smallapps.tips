@@ -1,0 +1,219 @@
+openapi: 3.0.1
+info:
+  title: Product Group Management
+  description: 'This service manages product group data'
+  termsOfService: http://startsmall.app/terms/
+  contact:
+    email: contact@startsmall.app
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about product
+  url: http://startsmall.app
+servers:
+- url: https://startsmall.app/product-group-management/v1
+- url: http://startsmall.app/product-group-management/v1
+tags:
+- name: product-group
+  description: product group management
+  externalDocs:
+    description: Detailed documentation
+    url: https://startsmall.app/product-group-management
+paths:
+  /product-group:
+      post:
+        tags:
+        - product-group
+        summary: create new product group with given name
+        operationId: createNewProductGroup
+        requestBody:
+          description: NewProductGroup object that needs to be added to the store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewProductGroup'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/NewProductGroup'
+          required: true
+        responses:
+          400:
+            description: Invalid ProductGroup definition. Business validations are failed.
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+          200:
+            description: successful operation
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+          500:
+            description: internal error
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+      put:
+        tags:
+        - product-group
+        summary: update product group with given name
+        operationId: updateProductGroup
+        requestBody:
+          description: ProductGroup object that needs to be added to the store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductGroup'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProductGroup'
+          required: true
+        responses:
+          400:
+            description: Invalid ProductGroup definition. Business validations are failed.
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+          404:
+            description: product group not found.
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+          200:
+            description: successful operation
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+          500:
+            description: internal error
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+  /product-group/find-by-name:
+      post:
+        tags:
+        - product-group
+        summary: find product group by name
+        operationId: findProductGroupByName
+        requestBody:
+          description: FindProductGroupQuery object that needs to be queried
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindProductGroupQuery'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/FindProductGroupQuery'
+          required: true
+        responses:
+          400:
+            description: Invalid FindProductGroupQuery definition. Business validations are failed.
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+          404:
+            description: ProductGroup not found.
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+          200:
+            description: successful operation
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/FindProductGroupQueryOperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/FindProductGroupQueryOperationResponse'
+          500:
+            description: internal error
+            content:
+              application/xml:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/OperationResponse'
+components:
+  schemas:
+    OperationResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    FindProductGroupQueryOperationResponse:
+      allOf:
+        - $ref: '#/components/schemas/OperationResponse'
+        - type: object
+          properties:
+            body:
+              $ref: '#/components/schemas/ProductGroup'
+    NewProductGroup:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 255
+      xml:
+        name: NewProductGroup
+    ProductGroup:
+      allOf:
+        - $ref: '#/components/schemas/NewProductGroup'
+        - type: object
+          required:
+          - id
+          properties:
+            id:
+              type: integer
+              format: int64
+            version:
+              type: integer
+              format: int32
+          xml:
+            name: ProductGroup
+    FindProductGroupQuery:
+      allOf:
+        - $ref: '#/components/schemas/NewProductGroup'
+        - type: object

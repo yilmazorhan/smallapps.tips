@@ -1,0 +1,158 @@
+buildscript {
+    dependencies {
+        classpath "org.openapitools:openapi-generator-gradle-plugin:5.0.0"
+    }
+}
+plugins {
+	id 'org.springframework.boot' version '2.4.1'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'org.openapi.generator' version '5.0.0'
+	id 'com.google.cloud.tools.jib' version '2.7.1'
+	id 'nebula.release' version '15.2.0'
+}
+
+dependencies {
+	implementation project(':product-group-data-api')
+	implementation project(':product-group-business-impl')
+	implementation project(':product-group-infra-data-postgresql')
+	
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.5.2'
+	implementation 'org.springdoc:springdoc-openapi-webmvc-core:1.5.2'
+	implementation 'io.swagger.core.v3:swagger-annotations:2.1.6'
+	implementation 'io.springfox:springfox-core:3.0.0'
+	implementation "io.swagger.parser.v3:swagger-parser:2.0.24"
+    implementation "org.openapitools:jackson-databind-nullable:0.2.1"
+    implementation 'org.postgresql:postgresql:42.2.16'
+	//implementation'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.0'
+	
+	
+	implementation 'org.liquibase:liquibase-core:4.2.2'
+	implementation 'org.jooq:jooq:3.14.4'
+	
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:testcontainers:1.15.1'
+	testImplementation 'org.testcontainers:postgresql:1.15.1'
+	testImplementation 'com.tngtech.archunit:archunit-junit5:0.15.0'
+		
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "generated/src/main/java"
+        }
+    }
+    main {
+        java {
+            srcDir "src/main/docker"
+        }
+    }
+    test {
+        java {
+            srcDir "src/test/architecture/java"
+        }
+    }
+}
+ext {
+	dockerExecutable = 'x'
+}
+openApiMeta {
+    generatorName = "product-management"
+    packageName = "tips.smallapps.web.generated.productgroup"
+    outputFolder = "$buildDir/meta".toString()
+}
+
+openApiValidate {
+    inputSpec = "$projectDir/src/main/resources/product-group.yaml"
+    recommend = true
+}
+
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$projectDir/src/main/resources/product-group.yaml"
+    outputDir = "$projectDir".toString()
+    apiPackage = "tips.smallapps.web.generated.productgroup.api"
+    invokerPackage = "tips.smallapps.web.generated.productgroup.invoker"
+    modelPackage = "tips.smallapps.web.generated.productgroup.model"
+    configOptions = [
+            sourceFolder: "/generated/src/main/java",
+            dateLibrary: "java8",
+            library: "spring-boot",
+            interfaceOnly:"true",
+            useBeanValidation:"true",
+            defaultInterfaces:"false"
+    ]
+    globalProperties = [
+            modelDocs: "false"
+    ]
+    skipValidateSpec = true
+    logToStderr = true
+    generateAliasAsModel = false
+    enablePostProcessFile = false
+}
+
+jar {
+	enabled = true
+}
+
+task makeConfigurationDirectory(dependsOn: bootJar){
+	def build = project.file("$buildDir/tmp-config")
+    doLast{
+      build.deleteDir()
+      build.mkdir()
+    }
+    outputs.upToDateWhen { false }
+}
+
+task copyConfiguration(dependsOn: makeConfigurationDirectory, type: Copy) {
+	from 'src/main/docker'
+    into "$buildDir/tmp-config/BOOT-INF/classes"
+    include "*.*"
+    outputs.upToDateWhen { false }
+}
+
+task updateConfiguration(dependsOn: copyConfiguration, type: Zip) {
+    archiveBaseName = project.tasks.jar.archiveFileName.get()
+    archiveFileName = project.tasks.jar.archiveFileName.get()
+    destinationDirectory = file("$buildDir/release")
+ 
+    from(zipTree("$buildDir/libs/"+project.tasks.jar.archiveFileName.get())) {
+        exclude("BOOT-INF/classes/application.properties")
+    }
+ 
+    from("$buildDir/tmp-config") {
+        include("BOOT-INF/classes/application.properties")
+    }
+    duplicatesStrategy = "FAIL"
+    outputs.upToDateWhen { false }
+}
+
+task deleteOldDistribution(dependsOn: updateConfiguration) {
+    def build = project.file("$buildDir/libs")
+    doLast{
+      build.deleteDir()
+      build.mkdir()
+    }
+}
+
+task copyReleaseJar(dependsOn: deleteOldDistribution, type: Copy) {
+    from project.file('$buildDir/release')
+    into project.file('$buildDir/libs') 
+    include "*.*"
+    outputs.upToDateWhen { false }
+}
+
+def isMac(){
+	return System.getProperty("os.name").toLowerCase().contains("mac") 
+}
+
+task buildLocalImage(dependsOn:copyReleaseJar, type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
+	jibExtension = project.extensions.getByName('jib')
+	doFirst {
+        jib.from.image = 'adoptopenjdk:15-jre-openj9'
+        jib.dockerClient.executable =  isMac() ? '/usr/local/bin/docker' : 'docker'
+    }
+    outputs.upToDateWhen { false }
+}

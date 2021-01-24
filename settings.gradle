@@ -1,0 +1,7 @@
+rootProject.name = 'smallapps'
+include 'architecture-decisions'
+include 'code-quality'
+include 'product-group-infra-data-postgresql'
+include 'product-group-data-api'
+include 'product-group-business-impl'
+include 'product-group-web-api-infra'

@@ -1,0 +1,11 @@
+README.md
+generated/src/main/java/tips/smallapps/web/generated/productgroup/api/ApiUtil.java
+generated/src/main/java/tips/smallapps/web/generated/productgroup/api/ProductGroupApi.java
+generated/src/main/java/tips/smallapps/web/generated/productgroup/model/FindProductGroupQuery.java
+generated/src/main/java/tips/smallapps/web/generated/productgroup/model/FindProductGroupQueryOperationResponse.java
+generated/src/main/java/tips/smallapps/web/generated/productgroup/model/FindProductGroupQueryOperationResponseAllOf.java
+generated/src/main/java/tips/smallapps/web/generated/productgroup/model/NewProductGroup.java
+generated/src/main/java/tips/smallapps/web/generated/productgroup/model/OperationResponse.java
+generated/src/main/java/tips/smallapps/web/generated/productgroup/model/ProductGroup.java
+generated/src/main/java/tips/smallapps/web/generated/productgroup/model/ProductGroupAllOf.java
+pom.xml

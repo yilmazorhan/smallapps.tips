@@ -1,0 +1,7 @@
+sourceSets {
+    test {
+        java {
+            srcDir "src/test/architecture/java"
+        }
+    }
+}

@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'com.minicrm'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+sourceCompatibility = JavaVersion.VERSION_14
+
+sourceSets {
+    main {
+        java {
+            srcDir "src/main/code-quality"
+        }
+    }
+}

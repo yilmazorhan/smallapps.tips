@@ -1,0 +1,121 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		mavenCentral()
+	}
+    dependencies {
+    	classpath 'org.jooq:jooq-codegen:3.14.4'
+  		classpath 'org.postgresql:postgresql:42.2.16'
+	    classpath 'org.testcontainers:testcontainers:1.15.1'
+	    classpath 'org.testcontainers:postgresql:1.15.1'
+		classpath 'org.liquibase:liquibase-core:4.2.0'  
+    }
+}
+
+jacocoTestReport {
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: '**/generated/**')
+		}))
+	}
+}
+
+configurations {
+    driver
+}
+
+dependencies {
+	implementation 'org.liquibase:liquibase-core:4.2.0'
+	implementation 'org.jooq:jooq:3.14.4'
+    implementation "org.postgresql:postgresql:42.2.16"
+    driver 'org.postgresql:postgresql:42.2.16'
+	implementation project(':product-group-data-api')
+    
+    testImplementation 'org.testcontainers:testcontainers:1.15.1'
+	testImplementation 'org.testcontainers:postgresql:1.15.1'
+}
+sourceSets {
+    main {
+        java {
+            srcDir "generated/src/main/java"
+        }
+    }
+}
+
+
+URLClassLoader loader = GroovyObject.class.classLoader
+	configurations.driver.each {
+		File file -> loader.addURL(file.toURL())
+}
+
+
+import liquibase.Contexts
+import liquibase.LabelExpression
+import liquibase.Liquibase
+import liquibase.database.DatabaseFactory
+import liquibase.database.jvm.JdbcConnection
+import liquibase.resource.FileSystemResourceAccessor
+import org.jooq.codegen.GenerationTool
+import org.jooq.meta.jaxb.*
+import org.testcontainers.containers.PostgreSQLContainer
+
+import java.sql.Connection
+import java.sql.DriverManager
+
+class JOOQCodeGenerator extends DefaultTask {
+
+	String schema
+	String projectDirectory
+	String changeLogFile
+	String packageName
+    
+    @TaskAction
+    void generateCode() {
+        PostgreSQLContainer postgres = new PostgreSQLContainer("postgres")
+            .withDatabaseName(schema)
+            .withUsername("root")
+            .withPassword("root")
+            .withEnv("POSTGRES_ROOT_HOST", "%")
+		try{
+				File file = this.getProject().getRootDir()
+				postgres.start() 
+				Class.forName(postgres.getDriverClassName())		       
+		        Connection conn = DriverManager.getConnection(postgres.getJdbcUrl(),postgres.getUsername(),postgres.getPassword())
+				String projectsubdir = projectDirectory
+				liquibase.database.Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(conn))
+				Liquibase liquibase = new liquibase.Liquibase(projectsubdir + "/" + changeLogFile , 
+											new FileSystemResourceAccessor(file), database)
+				liquibase.update(new Contexts(), new LabelExpression())
+				String fullPath = file.getAbsolutePath()
+				GenerationTool.generate(new Configuration()
+							    .withJdbc(new Jdbc()
+							        .withDriver(postgres.getDriverClassName())
+							        .withUrl(postgres.getJdbcUrl())
+							        .withUser(postgres.getUsername())
+							        .withPassword(postgres.getPassword()))
+							    .withGenerator(new Generator()
+							        .withDatabase(new Database()
+							        	.withInputSchema(schema)
+							        	.withExcludes("DATABASECHANGELOG|DATABASECHANGELOGLOCK"))
+							        .withGenerate(new Generate()
+							            .withPojos(true)
+							            .withDaos(true))
+							        .withTarget(new Target()
+							            .withPackageName(packageName)
+							            .withDirectory(fullPath + projectsubdir + '/generated/src/main/java'))))
+			} catch(Exception exc){
+				exc.printStackTrace();
+				throw exc;
+	        } finally {
+	        	postgres.stop()
+	        }
+        
+    }
+}
+
+task generateJooqJavaCode(type : JOOQCodeGenerator) {
+    schema 'public'
+	projectDirectory '/product-group-infra-data-postgresql'
+	changeLogFile '/src/main/resources/db/postgresql/database-change-log.xml'
+	packageName 'tips.smallapps.impl.productgroup.data.postgresql.generated'
+}
