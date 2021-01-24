@@ -1,8 +1,6 @@
 ## Development Environment Setup
 Install Docker Desktop and your favorite database development tool such as DBeaver.
 
-if you use mysql as database server, use following steps to create your database.
-
 if you use Postgres as database server , use following steps to create your database.
 
 1. Start your local Postgres Server `docker run --detach --name postgre-dev-server --env="POSTGRES_PASSWORD=postgres" --publish 5432:5432 postgres`
