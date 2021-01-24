@@ -1,3 +1,0 @@
-INDEX VERSION 1.131+/Users/snowman/development/workspace/smallapps/.metadata/.plugins/org.eclipse.jdt.core
-1277319819.index
-3889676621.index
