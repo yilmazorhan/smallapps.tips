@@ -4,7 +4,7 @@ plugins {
     id 'nebula.maven-publish' version '17.3.2'
 }
 
-group 'com.minicrm'
+group 'tips.smallapps'
 //version '1.0-SNAPSHOT'
 
 subprojects {
@@ -13,7 +13,7 @@ subprojects {
     apply plugin: 'project-report'
     apply plugin: 'checkstyle'
 
-    group 'com.minicrm'
+    group 'tips.smallapps'
   //  version '1.0-SNAPSHOT'
     sourceCompatibility = JavaVersion.VERSION_15
     
