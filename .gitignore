@@ -2,6 +2,7 @@
 .project
 .classpath
 .settings/*
+.metadata/*
 */.settings/*
 bin/*
 */bin/*
