@@ -2,6 +2,7 @@ plugins {
 	id 'java'
     id 'nebula.release' version '15.2.0'
     id 'nebula.maven-publish' version '17.3.2'
+    id "org.owasp.dependencycheck" version "6.1.0"
 }
 
 group 'tips.smallapps'
@@ -12,6 +13,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'project-report'
     apply plugin: 'checkstyle'
+    apply plugin: 'org.owasp.dependencycheck'
 
     group 'tips.smallapps'
   //  version '1.0-SNAPSHOT'
