@@ -23,7 +23,7 @@ dependencies {
 	implementation 'io.springfox:springfox-core:3.0.0'
 	implementation "io.swagger.parser.v3:swagger-parser:2.0.24"
     implementation "org.openapitools:jackson-databind-nullable:0.2.1"
-    implementation 'org.postgresql:postgresql:42.2.16'
+    implementation 'org.postgresql:postgresql:42.2.18'
 	//implementation'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.0'
 	
 	
@@ -147,7 +147,11 @@ def isMac(){
 	return System.getProperty("os.name").toLowerCase().contains("mac") 
 }
 
-task buildLocalImage(dependsOn:dependencyCheck, type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
+task checkOWASPDependencies(dependsOn:copyReleaseJar, type: org.owasp.dependencycheck.gradle.tasks.Analyze){
+
+}
+
+task buildLocalImage(dependsOn:checkOWASPDependencies, type: com.google.cloud.tools.jib.gradle.BuildDockerTask) {
 	jibExtension = project.extensions.getByName('jib')
 	doFirst {
         jib.from.image = 'adoptopenjdk:15-jre-openj9'
@@ -155,4 +159,3 @@ task buildLocalImage(dependsOn:dependencyCheck, type: com.google.cloud.tools.jib
     }
     outputs.upToDateWhen { false }
 }
-cleanBuildPublish.dependencyCheck  copyReleaseJar
