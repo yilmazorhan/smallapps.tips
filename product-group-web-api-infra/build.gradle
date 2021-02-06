@@ -156,6 +156,7 @@ task buildLocalImage(dependsOn:checkOWASPDependencies, type: com.google.cloud.to
 	doFirst {
         jib.from.image = 'adoptopenjdk:15-jre-openj9'
         jib.dockerClient.executable =  isMac() ? '/usr/local/bin/docker' : 'docker'
+        jib.container.creationTime = "USE_CURRENT_TIMESTAMP"
     }
     outputs.upToDateWhen { false }
 }
