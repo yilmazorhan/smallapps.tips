@@ -22,7 +22,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 public class BaseTest {
   private static PostgreSQLContainer postgres;
   private static PGSimpleDataSource postgresDS;
-  protected static DSLContext context;
+  static DSLContext context;
 
   @BeforeAll
   static void setUp() throws Exception {

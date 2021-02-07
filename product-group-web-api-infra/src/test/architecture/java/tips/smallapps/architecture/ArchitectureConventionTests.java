@@ -1,4 +1,4 @@
-package tr.com.minicrm.architecture;
+package tips.smallapps.architecture;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@AnalyzeClasses(packages = "tr.com.minicrm.web", importOptions = {AllIgnoredResources.class})
+@AnalyzeClasses(packages = "tips.smallapps.web", importOptions = {AllIgnoredResources.class})
 public class ArchitectureConventionTests {
 
   @ArchTest

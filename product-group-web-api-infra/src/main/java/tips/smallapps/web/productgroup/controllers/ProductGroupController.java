@@ -1,4 +1,4 @@
-package tr.com.minicrm.web.productgroup.controllers;
+package tips.smallapps.web.productgroup.controllers;
 
 import javax.validation.Valid;
 

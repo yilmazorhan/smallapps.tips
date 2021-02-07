@@ -1,4 +1,4 @@
-package tr.com.minicrm.web.platform.configuration;
+package tips.smallapps.web.platform.configuration;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -13,10 +13,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import tr.com.minicrm.web.productgroup.configuration.ProductGroupBusinessServiceConfiguration;
+import tips.smallapps.web.productgroup.configuration.ProductGroupBusinessServiceConfiguration;
 
 @Configuration
-@ComponentScan(basePackages = "tr.com.minicrm")
+@ComponentScan(basePackages = "tips.smallapps")
 @Import({ProductGroupBusinessServiceConfiguration.class})
 @EnableAutoConfiguration(exclude = {MongoReactiveAutoConfiguration.class, MongoAutoConfiguration.class,
     MongoRepositoriesAutoConfiguration.class, MongoDataAutoConfiguration.class, DataSourceAutoConfiguration.class,

@@ -1,4 +1,4 @@
-package tr.com.minicrm.web.productgroup;
+package tips.smallapps.web.productgroup;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

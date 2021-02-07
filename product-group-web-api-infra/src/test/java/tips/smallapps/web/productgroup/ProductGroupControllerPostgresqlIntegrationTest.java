@@ -1,4 +1,4 @@
-package tr.com.minicrm.web.productgroup;
+package tips.smallapps.web.productgroup;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;

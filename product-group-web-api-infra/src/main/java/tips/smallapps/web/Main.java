@@ -1,15 +1,15 @@
-package tr.com.minicrm.web;
+package tips.smallapps.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
-import tr.com.minicrm.web.platform.configuration.MainConfiguration;
+import tips.smallapps.web.platform.configuration.MainConfiguration;
 
 @SpringBootApplication
 @Import(MainConfiguration.class)
-@ComponentScan("tr.com.minicrm")
+@ComponentScan("tips.smallapps")
 public class Main {
 
   public static void main(String[] args) {

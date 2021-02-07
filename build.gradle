@@ -3,6 +3,7 @@ plugins {
     id 'nebula.release' version '15.2.0'
     id 'nebula.maven-publish' version '17.3.2'
     id "org.owasp.dependencycheck" version "6.1.0"
+    id "com.github.spotbugs" version "4.6.0"
 }
 
 group 'tips.smallapps'
@@ -14,6 +15,7 @@ subprojects {
     apply plugin: 'project-report'
     apply plugin: 'checkstyle'
     apply plugin: 'org.owasp.dependencycheck'
+    apply plugin: 'com.github.spotbugs'
 
     group 'tips.smallapps'
   //  version '1.0-SNAPSHOT'
@@ -51,6 +53,8 @@ subprojects {
         testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
         testImplementation 'com.tngtech.archunit:archunit-junit5:0.15.0'
 		testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+		
+		spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.11.0'
     } 
     
     jacoco {
@@ -65,6 +69,28 @@ subprojects {
             html.enabled true
         }
     }
+    
+    spotbugs {
+    	effort = 'max'
+	    excludeFilter = file("$rootDir/code-quality/src/main/code-quality/spotbugs-exclude-filter.xml")
+	    maxHeapSize = '1g'
+	}
+	
+    spotbugsMain {
+	    reports {
+	        html {
+	            enabled = true
+	          }
+	    }
+	}
+	
+	spotbugsTest {
+	    reports {
+	        html {
+	            enabled = true
+	          }
+	    }
+	}
 
     jacocoTestCoverageVerification {
         violationRules {
@@ -86,9 +112,9 @@ subprojects {
 	  ignoreFailures = false
 	  maxWarnings = 0
 	  maxErrors = 0
-	  toolVersion '8.36.1'
-	  
+	  toolVersion '8.36.1' 
 	}
+	
 
     test {
         useJUnitPlatform()
@@ -97,7 +123,7 @@ subprojects {
         }
 
         jacoco{
-            includes = ['tr.com.minicrm.*','tips.smallapps.*']
+            includes = ['tips.smallapps.*']
         }
 
         finalizedBy jacocoTestReport, jacocoTestCoverageVerification

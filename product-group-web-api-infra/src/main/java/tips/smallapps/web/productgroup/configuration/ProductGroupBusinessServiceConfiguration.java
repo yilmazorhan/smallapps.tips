@@ -1,4 +1,4 @@
-package tr.com.minicrm.web.productgroup.configuration;
+package tips.smallapps.web.productgroup.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

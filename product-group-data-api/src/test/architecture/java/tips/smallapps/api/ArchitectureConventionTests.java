@@ -8,7 +8,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.library.GeneralCodingRules;
 
 
-@AnalyzeClasses(packages = "tr.com.minicrm")
+@AnalyzeClasses(packages = "tips.smallapps")
 public class ArchitectureConventionTests {
 
   @ArchTest

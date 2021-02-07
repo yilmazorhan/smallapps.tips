@@ -1,4 +1,4 @@
-package tr.com.minicrm.architecture;
+package tips.smallapps.architecture;
 
 import java.util.Set;
 import java.util.regex.Pattern;
